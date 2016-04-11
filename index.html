@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Ext JS Calendar Sample</title>
+    <link rel="stylesheet" type="text/css" href="resources/css/calendar.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/examples.css" />
+    <!-- GC -->
+    <script type="text/javascript" src="extjs/shared/include-ext.js"></script>
+    <script type="text/javascript">
+        Ext.Loader.setConfig({
+            enabled: true,
+            paths: {
+                'Ext.calendar': 'src'
+            }
+        });
+        Ext.require([
+            //'Ext.diag.layout.Context',
+            //'Ext.diag.layout.ContextItem',
+            'Ext.calendar.App'
+        ]);
+        Ext.onReady(function(){
+            // launch the app:
+            Ext.create('Ext.calendar.App');
+            
+            // update the header logo date:
+            document.getElementById('logo-body').innerHTML = new Date().getDate();
+        });
+
+        var nw =require('nw.gui');
+
+        var win = nw.Window.get();
+        win.on('close', function() {
+          this.hide(); // Pretend to be closed already
+          console.log("We're closing...");
+          this.close(true); // then close it forcely
+        });
+        var tray = new nw.Tray({ title: '提醒小日历', icon: 'icon.png' ,click:function(){
+            win.show();
+        }});
+        // Give it a menu
+        var menu = new nw.Menu();
+     
+        menu.append(new nw.MenuItem({ type: 'normal', label: '设置' ,click:function(){
+            win.show();
+        }}));
+        menu.append(new nw.MenuItem({ type: 'normal', label: '帮助' ,click:function(){
+            
+        }}));
+           menu.append(new nw.MenuItem({ type: 'normal', label: '退出' ,click:function(){
+            nw.App.quit();
+        }}));
+        tray.menu = menu;
+        
+        var nwNotify = require('nw-notify');
+        nwNotify.setTemplatePath('notification.html');
+        nwNotify.setConfig({
+            displayTime: 7000
+        });
+        var num = 0;
+       
+        function handleClick(event) {
+            console.log('User clicked notification ' + event.id + '. Closing it immediately.');
+            event.closeNotification();
+        }
+    </script>
+</head>
+<body>
+    <div style="display:none;">
+    <div id="app-header-content">
+        <div id="app-logo">
+            <div class="logo-top">&nbsp;</div>
+            <div id="logo-body">&nbsp;</div>
+            <div class="logo-bottom">&nbsp;</div>
+        </div>
+        <h1>Ext JS Calendar</h1>
+        <span id="app-msg" class="x-hidden"></span>
+    </div>
+    </div>
+</body>
+</html>
